@@ -80,7 +80,6 @@ sudo cp -v $ruta/polybar/fonts/* /usr/share/fonts/truetype/
 
 # Copiando Archivos de Configuración
 
-cp -rv $ruta/Config/* ~/.config/
 sudo cp -rv $ruta/kitty /opt/
 
 # Kitty Root
@@ -177,8 +176,14 @@ echo "*/30 * * * * /usr/bin/apt update >/dev/null 2>&1 && /usr/bin/apt list --up
 sudo crontab /tmp/micron
 rm /tmp/micron
 
+# Copiar los archivos a config
+cp -rv $ruta/Config/* ~/.config/
+
+
 # Establecer permisos correctos
 echo -e "${GREEN}🔑 Estableciendo permisos...${NC}"
+chmod +x $HOME/.config/kitty/kitty.conf 2>/dev/null
+chmod +x $HOME/.config/sxhkd/sxhkdrc 2>/dev/null
 chmod +x $HOME/.config/bspwm/bspwmrc 2>/dev/null
 chmod +x $HOME/.config/polybar/launch.sh 2>/dev/null
 chmod +x $HOME/.config/bin/*.sh 2>/dev/null
