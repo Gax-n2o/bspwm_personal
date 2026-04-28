@@ -1,0 +1,219 @@
+#!/bin/bash
+
+# Colores para output
+R='\033[0;31m'
+G='\033[0;32m'
+Y='\033[1;33m'
+NC='\033[0m'
+
+if [ "$(whoami)" == "root" ]; then
+    exit 1
+fi
+
+ruta=$(pwd)
+
+# Actualizando el sistema
+
+sudo apt update
+
+sudo apt upgrade -y
+
+# Instalando dependencias de Entorno
+
+sudo apt install -y build-essential git vim xcb libxcb-util0-dev libxcb-ewmh-dev libxcb-randr0-dev libxcb-icccm4-dev libxcb-keysyms1-dev libxcb-xinerama0-dev libasound2-dev libxcb-xtest0-dev libxcb-shape0-dev
+
+# Instalando Requerimientos para la polybar
+
+sudo apt install -y cmake cmake-data pkg-config python3-sphinx libcairo2-dev libxcb1-dev libxcb-util0-dev libxcb-randr0-dev libxcb-composite0-dev python3-xcbgen xcb-proto libxcb-image0-dev libxcb-ewmh-dev libxcb-icccm4-dev libxcb-xkb-dev libxcb-xrm-dev libxcb-cursor-dev libasound2-dev libpulse-dev libjsoncpp-dev libmpdclient-dev libuv1-dev libnl-genl-3-dev
+
+# Dependencias de Picom
+
+sudo apt install -y meson libxext-dev libxcb1-dev libxcb-damage0-dev libxcb-xfixes0-dev libxcb-shape0-dev libxcb-render-util0-dev libxcb-render0-dev libxcb-composite0-dev libxcb-image0-dev libxcb-present-dev libxcb-xinerama0-dev libpixman-1-dev libdbus-1-dev libconfig-dev libgl1-mesa-dev libpcre2-dev libevdev-dev uthash-dev libev-dev libx11-xcb-dev libxcb-glx0-dev libpcre3 libpcre3-dev
+
+# Instalamos paquetes adionales
+
+sudo apt install -y feh flameshot scrub zsh rofi xclip bat locate wmname acpi bspwm sxhkd imagemagick ranger
+
+# Creando carpeta de Reposistorios
+
+mkdir ~/github
+
+# Descargar Repositorios Necesarios
+
+cd ~/github
+git clone --recursive https://github.com/polybar/polybar
+git clone https://github.com/ibhagwan/picom.git
+
+# Instalando Polybar
+
+cd ~/github/polybar
+mkdir build
+cd build
+cmake ..
+make -j$(nproc)
+sudo make install
+
+# Instalando Picom
+
+cd ~/github/picom
+git submodule update --init --recursive
+meson --buildtype=release . build
+ninja -C build
+sudo ninja -C build install
+
+# Instalando p10k
+
+git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/.powerlevel10k
+echo 'source ~/.powerlevel10k/powerlevel10k.zsh-theme' >>~/.zshrc
+
+# Instalando p10k root
+
+sudo git clone --depth=1 https://github.com/romkatv/powerlevel10k.git /root/.powerlevel10k
+
+# Instalamos las HackNerdFonts
+
+sudo cp -v $ruta/fonts/HNF/* /usr/local/share/fonts/
+
+# Instalando Fuentes de Polybar
+
+sudo cp -v $ruta/polybar/fonts/* /usr/share/fonts/truetype/
+
+# Copiando Archivos de Configuración
+
+cp -rv $ruta/Config/* ~/.config/
+sudo cp -rv $ruta/kitty /opt/
+
+# Kitty Root
+
+sudo cp -rv $ruta/Config/kitty /root/.config/
+
+# Copia de configuracion de .p10k.zsh y .zshrc
+
+rm -rf ~/.zshrc
+cp -av $ruta/.zshrc ~/.zshrc
+cp -av $ruta/.nanorc ~/.nanorc
+
+cp -av $ruta/.p10k.zsh ~/.p10k.zsh
+sudo cp -av $ruta/.p10k.zsh-root /root/.p10k.zsh
+
+# Script
+
+sudo cp -av $ruta/scripts/whichSystem.py /usr/local/bin/
+sudo cp -av $ruta/scripts/autonmap ~/.local/bin
+
+# Plugins ZSH
+
+sudo apt install -y zsh-syntax-highlighting zsh-autosuggestions zsh-autocomplete
+sudo mkdir /usr/share/zsh-sudo
+cd /usr/share/zsh-sudo
+sudo wget https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/plugins/sudo/sudo.plugin.zsh
+
+# Cambiando de SHELL a zsh
+
+chsh -s /usr/bin/zsh
+sudo usermod --shell /usr/bin/zsh root
+sudo ln -s -fv ~/.zshrc /root/.zshrc
+
+# instalar snap y flatpak
+sudo apt install snapd
+sudo apt install flatpak -y
+flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
+
+# instslando lsd
+sudo dpkg -i $ruta/lsd1.2.0.deb
+
+# Instalando bat
+sudo dpkg -i $ruta/bat0.26.1.deb
+
+# Instalando xautolock, betterlock y tmux
+
+cd ~/github
+wget http://ftp.debian.org/debian/pool/main/x/xautolock/xautolock_2.2-8_amd64.deb
+sudo dpkg -i xautolock_2.2-8_amd64.deb
+
+#tmux
+cd ~/github
+git clone --single-branch https://github.com/gpakosz/.tmux.git
+ln -s -f .tmux/.tmux.conf
+cp .tmux/.tmux.conf.local .
+
+#betterlockscreen
+git clone https://github.com/betterlockscreen/betterlockscreen 
+cd betterlockscreen 
+sudo ./install.sh
+
+# Instalar i3lock imagemagick
+sudo apt install i3lock imagemagick bc feh
+
+# Instalar Obsidian thunderbird y thunar
+
+sudo snap install obsidian --classic
+
+sudo apt install thunderbird -y
+
+sudo apt install thunar -y
+
+# Install freetube
+flatpak install flathub io.freetubeapp.FreeTube 
+sudo flatpak repair
+
+# Instalando de mas apt
+
+sudo apt install arandr
+sudo apt install blueman bluez bluez-tools pulseaudio-module-bluetooth -y
+
+# Instalando Wallpaper de S4vitar
+
+mkdir ~/Wallpaper
+cp -v $ruta/Wallpaper/* ~/Wallpaper
+
+#Instalando xclip
+sudo apt install xclip
+
+#Crontab para la actualizacion automatica de updates
+sudo crontab -l > /tmp/micron 2>/dev/null
+echo "*/30 * * * * /usr/bin/apt update >/dev/null 2>&1 && /usr/bin/apt list --upgradable 2>/dev/null | /bin/grep -E '^[^[:space:]]+[[:space:]]+' | /usr/bin/tee /home/n2o/.config/bin/updates-full.txt | /usr/bin/wc -l > /home/n2o/.config/bin/updates-count.txt" >> /tmp/micron
+# Cargar el archivo
+sudo crontab /tmp/micron
+rm /tmp/micron
+
+# Establecer permisos correctos
+echo -e "${GREEN}🔑 Estableciendo permisos...${NC}"
+chmod +x $HOME/.config/bspwm/bspwmrc 2>/dev/null
+chmod +x $HOME/.config/polybar/launch.sh 2>/dev/null
+chmod +x $HOME/.config/bin/*.sh 2>/dev/null
+chmod +x $HOME/.config/bspwm/*.sh 2>/dev/null
+chmod +x $HOME/.config/bspwm/scripts/*.sh 2>/dev/null
+chmod +x $HOME/.config/bspwm/scripts/Bspwm-ScratchPad 2>/dev/null
+chmod +x $HOME/.config/bspwm/scripts/bspwm_resize 2>/dev/null
+chmod +x $HOME/.config/kitty/kitty.conf 2>/dev/null
+chmod +x $HOME/.config/polybar/config.sh 2>/dev/null
+chmod +x $HOME/.config/polybar/scripts/*.sh 2>/dev/null
+chmod +x $HOME/.config/polybar/scripts/updates/* 2>/dev/null
+chmod +x $HOME/.config/rofi/applets/bin/*sh 2>/dev/null
+chmod +x $HOME/.config/rofi/applets/shared/theme.bash 2>/dev/null
+chmod +x $HOME/.config/rofi/launchers/type-7/launcher.sh 2>/dev/null
+chmod +x $HOME/.config/rofi/launchers/type-6/launcher.sh 2>/dev/null
+chmod +x $HOME/.config/rofi/launchers/type-5/launcher.sh 2>/dev/null
+chmod +x $HOME/.config/rofi/launchers/type-4/launcher.sh 2>/dev/null
+chmod +x $HOME/.config/rofi/launchers/type-3/launcher.sh 2>/dev/null
+chmod +x $HOME/.config/rofi/launchers/type-2/launcher.sh 2>/dev/null
+chmod +x $HOME/.config/rofi/launchers/type-1/launcher.sh 2>/dev/null
+chmod +x $HOME/.config/rofi/powermenu/type-6/powermenu.sh 2>/dev/null
+chmod +x $HOME/.config/rofi/powermenu/type-5/powermenu.sh 2>/dev/null
+chmod +x $HOME/.config/rofi/powermenu/type-4/powermenu.sh 2>/dev/null
+chmod +x $HOME/.config/rofi/powermenu/type-3/powermenu.sh 2>/dev/null
+chmod +x $HOME/.config/rofi/powermenu/type-2/powermenu.sh 2>/dev/null
+chmod +x $HOME/.config/rofi/powermenu/type-1/powermenu.sh 2>/dev/null
+
+echo -e "${G}🔑 Permisos Establecidos Exitosamente${NC}"
+sleep 3
+
+# Limpiar
+
+rm -rf ~/github
+rm -rf $ruta
+
+# Mensaje de Instalado
+echo -e "${G}✨ Setup completado!${NC}"
+echo -e "${Y}💡 Puedes cerrar sesion y entrar a bspwm${NC}"
