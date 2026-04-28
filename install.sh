@@ -6,6 +6,8 @@ G='\033[0;32m'
 Y='\033[1;33m'
 NC='\033[0m'
 
+#!/bin/bash
+
 if [ "$(whoami)" == "root" ]; then
     exit 1
 fi
@@ -16,7 +18,7 @@ ruta=$(pwd)
 
 sudo apt update
 
-sudo apt upgrade -y
+sudo parrot-upgrade
 
 # Instalando dependencias de Entorno
 
@@ -70,16 +72,33 @@ echo 'source ~/.powerlevel10k/powerlevel10k.zsh-theme' >>~/.zshrc
 
 sudo git clone --depth=1 https://github.com/romkatv/powerlevel10k.git /root/.powerlevel10k
 
+# Temas de Rofi:
+
+mkdir -p ~/.config/rofi/themes
+cp $ruta/rofi/* ~/.config/rofi/themes/
+cp $ruta/rofi/template ~/.config/rofi/themes/.
+
+# Instando lsd
+
+sudo dpkg -i $ruta/lsd.deb
+
 # Instalamos las HackNerdFonts
 
 sudo cp -v $ruta/fonts/HNF/* /usr/local/share/fonts/
 
 # Instalando Fuentes de Polybar
 
-sudo cp -v $ruta/polybar/fonts/* /usr/share/fonts/truetype/
+sudo cp -v $ruta/Config/polybar/fonts/* /usr/share/fonts/truetype/
+
+# Instalando Wallpaper de S4vitar
+
+mkdir ~/Wallpaper
+cp -v $ruta/Wallpaper/* ~/Wallpaper
+mkdir ~/ScreenShots
 
 # Copiando Archivos de Configuración
 
+cp -rv $ruta/Config/* ~/.config/
 sudo cp -rv $ruta/kitty /opt/
 
 # Kitty Root
@@ -89,16 +108,15 @@ sudo cp -rv $ruta/Config/kitty /root/.config/
 # Copia de configuracion de .p10k.zsh y .zshrc
 
 rm -rf ~/.zshrc
-cp -av $ruta/.zshrc ~/.zshrc
-cp -av $ruta/.nanorc ~/.nanorc
+cp -v $ruta/.zshrc ~/.zshrc
+cp -v $ruta/.nanorc ~/.nanorc
 
-cp -av $ruta/.p10k.zsh ~/.p10k.zsh
-sudo cp -av $ruta/.p10k.zsh-root /root/.p10k.zsh
+cp -v $ruta/.p10k.zsh ~/.p10k.zsh
+sudo cp -v $ruta/.p10k.zsh-root /root/.p10k.zsh
 
 # Script
 
-sudo cp -av $ruta/scripts/whichSystem.py /usr/local/bin/
-sudo cp -av $ruta/scripts/autonmap ~/.local/bin
+sudo cp -v $ruta/scripts/whichSystem.py /usr/local/bin/
 
 # Plugins ZSH
 
@@ -112,6 +130,13 @@ sudo wget https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/plugins/sudo/
 chsh -s /usr/bin/zsh
 sudo usermod --shell /usr/bin/zsh root
 sudo ln -s -fv ~/.zshrc /root/.zshrc
+
+# Configuramos el Tema de Rofi
+
+rofi-theme-selector
+
+echo -e "Primera parte terminada"
+sleep 5
 
 # instalar snap y flatpak
 sudo apt install snapd
