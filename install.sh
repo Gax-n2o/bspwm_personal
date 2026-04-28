@@ -15,17 +15,17 @@ fi
 ruta="$HOME/bspwm_personal"
 
 # Primera parte
-echo -e "Ejecutando primera parte"
+echo -e "${R}Ejecutando primera parte${NC}"
 cd
 git clone https://github.com/xJackSx/BSPWMparrot.git
 cd BSPWMparrot
 chmod +x install.sh
 ./install.sh
 
-echo -e "${Y}Primera parte ejecutada"
+echo -e "${Y}Primera parte ejecutada${NC}"
 
 # Segunda parte 
-echo -e "Segunda parte en ejecucion${NC}"
+echo -e "${R}Segunda parte en ejecucion${NC}"
 
 cd $HOME/bspwm_personal
 
