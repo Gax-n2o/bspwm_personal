@@ -43,7 +43,7 @@ cp -v $ruta/.nanorc ~/.nanorc
 
 # Script
 mkdir -p ~/.local/bin/
-sudo cp -v $ruta/scripts/autonmap /.local/bin/
+sudo cp -av $ruta/scripts/autonmap /.local/bin/
 
 sleep 5
 
