@@ -235,7 +235,3 @@ function zshexit() {
 # Created by `pipx` on 2026-04-11 00:42:31
 export PATH="$PATH:/home/n2o/.local/bin"
 export PATH="$HOME/.local/bin:$PATH"
-export DENO_INSTALL="/home/n20/.deno"
-export PATH="$DENO_INSTALL/bin:$PATH"
-
-. "/home/n2o/.deno/env"
