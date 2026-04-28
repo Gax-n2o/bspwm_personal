@@ -58,11 +58,10 @@ echo $(( index + 1 )) > "$INDEX_FILE"
 
 if [ ! -d "$WALL_LOCK" ]; then
     echo "Error: La carpeta $WALL_LOCK no existe, Creando Carpeta." >&2
-    mkdir -p $HOME/Wall_lock
-    cp $HOME/Wallpaper/*.jpg $HOME/Wall_lock
+    mkdir -p $HOME/Wall-lock
+    cp $HOME/Wallpaper/*.jpg $HOME/Wall-lock
 else 
     echo "la carpeta ya esta creada" >&2
 fi
 
-# Fin
 exit 0
