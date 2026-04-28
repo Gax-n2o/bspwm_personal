@@ -12,7 +12,7 @@ if [ "$(whoami)" == "root" ]; then
     exit 1
 fi
 
-ruta=$(pwd)
+ruta="$HOME/bspwm_personal"
 
 # Primera parte
 echo -e "Ejecutando primera parte"
@@ -22,13 +22,15 @@ cd BSPWMparrot
 chmod +x install.sh
 ./install.sh
 
-echo -e "Primera parte ejecutada"
+echo -e "${Y}Primera parte ejecutada"
 
 # Segunda parte 
-echo -e "Segunda parte en ejecucion"
+echo -e "Segunda parte en ejecucion${NC}"
 
-cd
-~/github
+cd $HOME/bspwm_personal
+
+mkdir github
+cd ~/github
 
 # Instalando Wallpaper propios
 rm -rf ~/Wallpaper/*
