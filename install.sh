@@ -78,10 +78,6 @@ mkdir -p ~/.config/rofi/themes
 cp $ruta/rofi/* ~/.config/rofi/themes/
 cp $ruta/rofi/template ~/.config/rofi/themes/.
 
-# Instando lsd
-
-sudo dpkg -i $ruta/lsd.deb
-
 # Instalamos las HackNerdFonts
 
 sudo cp -v $ruta/fonts/HNF/* /usr/local/share/fonts/
@@ -94,7 +90,6 @@ sudo cp -v $ruta/Config/polybar/fonts/* /usr/share/fonts/truetype/
 
 mkdir ~/Wallpaper
 cp -v $ruta/Wallpaper/* ~/Wallpaper
-mkdir ~/ScreenShots
 
 # Copiando Archivos de Configuración
 
@@ -117,6 +112,8 @@ sudo cp -v $ruta/.p10k.zsh-root /root/.p10k.zsh
 # Script
 
 sudo cp -v $ruta/scripts/whichSystem.py /usr/local/bin/
+sudo cp -v $ruta/scripts/autonmap /.local/bin/
+
 
 # Plugins ZSH
 
