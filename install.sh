@@ -42,7 +42,7 @@ cp -v $ruta/.zshrc ~/.zshrc
 cp -v $ruta/.nanorc ~/.nanorc
 
 # Script
-mkdir -p ~/.local/bin
+mkdir -p ~/.local/bin/
 sudo cp -v $ruta/scripts/autonmap /.local/bin/
 
 sleep 5
@@ -104,7 +104,7 @@ rm /tmp/micron
 
 # Copiar los archivos a config
 rm -rf $HOME/.config/{polybar,bin,bspwm,kitty,mpv,picom,rofi,sxhkd}
-cp -av $ruta/Config/* ~/.config/
+cp -av $ruta/config/* ~/.config/
 
 # Establecer permisos correctos
 echo -e "${GREEN}🔑 Estableciendo permisos...${NC}"
