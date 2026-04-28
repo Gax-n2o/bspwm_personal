@@ -164,7 +164,7 @@ sudo apt install blueman bluez bluez-tools pulseaudio-module-bluetooth -y
 # Instalando Wallpaper de S4vitar
 
 mkdir ~/Wallpaper
-cp -v $ruta/Wallpaper/* ~/Wallpaper
+cp -av $ruta/Wallpaper/* ~/Wallpaper
 
 #Instalando xclip
 sudo apt install xclip
@@ -177,8 +177,8 @@ sudo crontab /tmp/micron
 rm /tmp/micron
 
 # Copiar los archivos a config
-cp -rv $ruta/Config/* ~/.config/
 
+cp -av $ruta/Config/* ~/.config/
 
 # Establecer permisos correctos
 echo -e "${GREEN}🔑 Estableciendo permisos...${NC}"
