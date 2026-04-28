@@ -177,7 +177,7 @@ sudo crontab /tmp/micron
 rm /tmp/micron
 
 # Copiar los archivos a config
-
+rm -rf $HOME/.config/{polybar,bin,bspwm,kitty,mpv,picom,rofi,sxhkd}
 cp -av $ruta/Config/* ~/.config/
 
 # Establecer permisos correctos
