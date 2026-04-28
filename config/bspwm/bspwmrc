@@ -3,6 +3,9 @@
 wmname LG3D &
 vmware-user-suid-wrapper &
 
+# En caso de que estes en uan Maquina Virtual
+xrandr --output Virtual1 --mode 1920x1080
+
 pgrep -x sxhkd > /dev/null || sxhkd &
 
 bspc monitor -d I II III IV V VI VII VIII IX X
