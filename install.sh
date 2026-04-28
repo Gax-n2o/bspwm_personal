@@ -29,8 +29,7 @@ echo -e "${R}Segunda parte en ejecucion${NC}"
 
 cd $HOME/bspwm_personal
 
-mkdir github
-cd ~/github
+mkdir -p ~/github
 
 # Instalando Wallpaper propios
 rm -rf ~/Wallpaper/*
@@ -43,6 +42,7 @@ cp -v $ruta/.zshrc ~/.zshrc
 cp -v $ruta/.nanorc ~/.nanorc
 
 # Script
+mkdir -p ~/.local/bin
 sudo cp -v $ruta/scripts/autonmap /.local/bin/
 
 sleep 5
