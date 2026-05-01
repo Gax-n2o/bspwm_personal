@@ -1,0 +1,156 @@
+#!/bin/bash
+
+
+#===============================================================================
+# Script: autonmap
+# Autor: N2O
+# Descripción: Ejecuta nmap, extrae puertos con extractPorts y lanza escaneo de versiones -sCV sobre los puertos abiertos.
+# Uso: uselo en modo root: autonmap <IP>
+#===============================================================================
+
+#Colores
+
+R='\033[1;31m'
+G='\033[1;32m'
+Y='\033[1;33m'
+B='\033[1;34m'
+M='\033[1;35m'
+C='\033[1;36m'
+W='\033[1;37m'
+NC='\033[0m'
+
+R=$'\033[1;31m'
+G=$'\033[1;32m'
+Y=$'\033[1;33m'
+B=$'\033[1;34m'
+M=$'\033[1;35m'
+C=$'\033[1;36m'
+W=$'\033[1;37m'
+NC=$'\033[0m'
+
+show_banner() {
+    echo -e "${G}   █████╗ ██╗   ██╗████████╗ ██████╗ ███╗   ██╗███╗   ███╗ █████╗ ██████╗ "
+	echo -e "${G}  ██╔══██╗██║   ██║╚══██╔══╝██╔═══██╗████╗  ██║████╗ ████║██╔══██╗██╔══██╗"
+    echo -e "${Y}  ███████║██║   ██║   ██║   ██║   ██║██╔██╗ ██║██╔████╔██║███████║██████╔╝"
+    echo -e "${R}  ██╔══██║██║   ██║   ██║   ██║   ██║██║╚██╗██║██║╚██╔╝██║██╔══██║██╔═══╝ "
+    echo -e "${R}  ██║  ██║╚██████╔╝   ██║   ╚██████╔╝██║ ╚████║██║ ╚═╝ ██║██║  ██║██║     "
+    echo -e "${R}  ╚═╝  ╚═╝ ╚═════╝    ╚═╝    ╚═════╝ ╚═╝  ╚═══╝╚═╝     ╚═╝╚═╝  ╚═╝╚═╝     ${NC}"
+    echo ""
+    echo -e "${C}                    ⚡ The Silent Port Hunter ⚡${NC}"
+    echo -e "${W}                                N2O${NC}"
+    echo "-------------------------------------------------------------"
+    echo ""
+}
+
+#mostrar banner
+show_banner
+
+if [ "$EUID" -ne 0 ]; then
+    echo -e "${R} [!] Debes ejecutar este script como root, vuelve a ejecutarlo en modo root.${NC}"
+    exit 1
+fi
+
+ if [ $# -ne 1 ]; then
+    echo -e "${Y}Usalo asi en modo root: autonmap <IP>${NC}"
+    exit 1
+    fi
+    
+    IP=$1
+    OUTPUT="allPorts"
+    puerto=80
+	Carpeta=$(pwd)
+
+    # whichsystem
+    resultado=$(whichSystem.py "$IP" 2>/dev/null)
+    if [ $? -eq 0 ]; then
+    echo -e "${Y}Estamos frente a una Maquina ${B}$resultado${NC}"
+    else
+      sleep 3
+      exit 1
+    fi
+    
+
+    echo -e "${G}[✓] Escaneando $IP - Guardando en $OUTPUT${NC}"
+    if nmap -p- -sS --min-rate 5000 --open -vvv -n -Pn "$IP" -oG "$OUTPUT"; then
+    echo -e "${Y}[✓] Extrayendo puertos abiertos...${NC}"
+    else
+      echo -e "${R}[!] no se pudieron escanear los puertos${NC}"
+	  sleep 3
+      exit 1
+    fi
+    
+	# Adicional: guardar los puertos en un archivo para usarlos después
+    ports=$(grep -oP '\d+/open' "$OUTPUT" | cut -d'/' -f1 | paste -sd ',')
+ 	 echo -e "${B}Estos son los puertos abiertos  ${R}$ports${NC}"
+     echo -e "$ports" > "p_$IP.txt"
+     echo -e "${M}[*] Puertos guardados en p_$IP.txt${NC}"
+
+       sleep 3
+       
+   # Detectar la version y servicios que corren en los puertos abiertos
+   
+   if vs=$(sudo nmap -sCV -p"$ports" "$IP" -oN targeted); then
+   echo -e "${Y}[✓] Detectando Version y Servicio${NC}"
+   echo -e "${M}$vs${NC}"
+   echo -e "${Y}Si te queda mas comodo desde Otra terminal puedes ejecutar cat Archivo -l java${NC}"
+
+   else 
+   
+    echo -e "${R}[!] No se puedo detectar la version ni los servicios${NC}"
+    exit 1
+   fi
+   sleep 3
+
+   read -p "${G}¿Te gustaria tambien imprimir el resultado para verlo desde el localhost?:${NC}" respuesta
+   if [[ "$respuesta" == "si" ||  "$respuesta" == "s" ||  "$respuesta" == "y" ]]; then
+		echo -e "${B}[✓] Ejecutando proceso XML ${NC}"
+   		vs2=$(sudo nmap -sCV -p"$ports" "$IP" -oX targetedXML)
+   		echo -e  "${G}[✓] Proceso Completado${NC}"
+   else
+   		echo -e "${Y}[✓] Proceso Terminado completamente, continuando...${NC}"
+   fi
+
+ 	sleep 3
+
+	read -p "${B}¿Te gustaria ver el archivo ahora desde localhost?: ${NC}" respuesta
+    if [[ "$respuesta" == "si" ||  "$respuesta" == "s" ||  "$respuesta" == "y" ]]; then
+        echo -e "${C}[✓] Abriendo Archivo ${NC}"
+        echo -e "${C}[✓] Abre el navegador y puedes ejecutar ctrl + c para seguir con el proceso${NC}"
+        Archivo=$(xsltproc targetedXML > index.html)
+        python3 -m http.server 80
+        
+    fi
+	sleep 3
+
+	read -p "${B}¿Te gustaria ejecutar el whatweb ahora?: ${NC}" respuesta
+    if [[ "$respuesta" == "si" ||  "$respuesta" == "s" ||  "$respuesta" == "y" ]]; then
+		echo -e "${C}[✓] ejecutando whatweb Basico${NC}"
+    	whatweb "$IP"
+    	sleep 5
+    	echo -e "${C}[✓] Ejecutando en 5seg con Verbose ${NC}"
+        whatweb "$IP" -v
+        echo -e  "${B}[✓] Proceso Completado${NC}"
+    fi
+	sleep 3
+	echo -e "${R} Acontinuacion podras usar tambien smbclient y netexec, asegurate de tener el puerto 445 abierto${NC}"
+	sleep 3
+	read -p "${B}¿Te gustaria ejecutar el netexec y smbclient ahora?: ${NC}" respuesta
+    if [[ "$respuesta" == "si" ||  "$respuesta" == "s" ||  "$respuesta" == "y" ]]; then
+        echo -e "${C}[✓] ejecutando vamos a verificar que tengas instalado netexec${NC}"
+        if ! command -v netexec &> /dev/null; then
+        	echo -e "${R}[!] netexec no encontrado...${NC} "
+        	echo -e "${G}Instalando ...${NC}"
+        	sudo apt install netexec -y
+        	echo -e "${B}[✓] netexec Instalado con Exito${NC}"
+			echo -e "${G}Continuamos con la ejecucion de netexec null session o Anonima${NC}"
+			netexec smb "$IP" -u '' -p '' --verbose --timeout 5
+       else
+       		echo -e "${B}Ya esta instalado continuamos con netexec null session o Anonima${NC}"
+       		netexec smb "$IP" -u '' -p '' --verbose --timeout 5
+       		sleep 3
+       		echo -e "${B}Ya esta instalado continuamos con smbclient null session o Anonima${NC}"
+       		smbclient -L "$IP" -N
+			echo -e  "${B}[✓] Proceso Completado, Adios${NC}"
+	  		exit 1
+	    fi
+    fi
