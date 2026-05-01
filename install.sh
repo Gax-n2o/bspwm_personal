@@ -52,12 +52,6 @@ sudo apt install snapd
 sudo apt install flatpak -y
 flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo
 
-# instslando lsd
-sudo dpkg -i $ruta/lsd1.2.0.deb
-
-# Instalando bat
-sudo dpkg -i $ruta/bat0.26.1.deb
-
 # Instalando xautolock, betterlock y tmux
 
 cd ~/github
